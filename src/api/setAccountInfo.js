@@ -18,16 +18,16 @@ module.exports = async (req_, res_) => {
             !address ||
             !publicKey ||
             !signature ||
-            getAddressInfo(accessToken).network !== Network.mainnet ||
-            !getAddressInfo(accessToken).bech32
+            getAddressInfo(address).network !== Network.mainnet ||
+            !getAddressInfo(address).bech32
         ) {
             console.log("false: ", !accessToken)
             console.log("false: ", !discordServerId)
             console.log("false: ", !address)
             console.log("false: ", !publicKey)
             console.log("false: ", !signature)
-            console.log("false: ", getAddressInfo(accessToken).network !== Network.mainnet)
-            console.log("false: ", !getAddressInfo(accessToken).bech32)
+            console.log("false: ", getAddressInfo(address).network !== Network.mainnet)
+            console.log("false: ", !getAddressInfo(address).bech32)
             return res_.send({ result: false, status: FAIL, message: "params fail" });
         }
 
