@@ -1,32 +1,81 @@
-const { user } = require('../db');
-const { SUCCESS, FAIL, isAccount } = require('../utils')
+const { validate, getAddressInfo, Network, AddressType, AddressInfo } = require('bitcoin-address-validation');
+const accounts = require('../db/accounts');
+const { SUCCESS, FAIL, checkRole } = require('../utils')
 
 module.exports = async (req_, res_) => {
-    console.log("getUserInfo: ", req_.body);
-    const accessToken = req_.body.accessToken
-    const discordServerId = req_.body.discordServerId
-    const address = req_.body.address
-    const signature = req_.body.signature
-    const publicKey = req_.body.publicKey
+    try {
 
-    if (!accessToken || !isAccount(accessToken)) {
-        console.log("null: ", (!accessToken || !isAccount(accessToken)));
-        return res_.send({ result: false, status: FAIL, message: "accessToken fail" });
-    }
+        console.log("setUserInfo: ", req_.body);
+        const accessToken = req_.body.accessToken
+        const discordServerId = req_.body.discordServerId
+        const address = req_.body.address
+        const publicKey = req_.body.publicKey
+        const signature = req_.body.signature
 
-    const fetchItem = await user.findOne({ accessToken: accessToken });
-    //console.log("fetchItem: ", fetchItem);
-    if (fetchItem && isAccount(fetchItem.accessToken)) {
-        // update last loginTime
-        const _updateResult = await user.updateOne({ accessToken: accessToken }, {
-            lastLoginDate: Date.now()
-        });
-
-        if (!_updateResult) {
-            console.log("updateOne fail!", _updateResult);
+        if (
+            !accessToken ||
+            !discordServerId ||
+            !address ||
+            !publicKey ||
+            !signature ||
+            getAddressInfo(accessToken).network !== Network.mainnet ||
+            !getAddressInfo(accessToken).bech32
+        ) {
+            console.log("false: ", !accessToken)
+            console.log("false: ", !discordServerId)
+            console.log("false: ", !address)
+            console.log("false: ", !publicKey)
+            console.log("false: ", !signature)
+            console.log("false: ", getAddressInfo(accessToken).network !== Network.mainnet)
+            console.log("false: ", !getAddressInfo(accessToken).bech32)
+            return res_.send({ result: false, status: FAIL, message: "params fail" });
         }
-        return res_.send({ result: fetchItem, status: SUCCESS, message: "accessToken info" });
-    } else {
-        return res_.send({ result: false, status: FAIL, message: "NO_REGISTER" });
+
+        // verify signature
+        // TODO
+
+        const { version, kind } = checkRole(accessToken, discordServerId);
+
+        const fetchItem = await accounts.findOne({ accessToken: accessToken, discordServerId: discordServerId });
+        //console.log("fetchItem: ", fetchItem);
+        if (fetchItem) {
+            // update last loginTime
+            const _updateResult = await accounts.updateOne({ accessToken: accessToken, discordServerId: discordServerId }, {
+                address: address,
+                publicKey: publicKey,
+                roleVersion: version,
+                roleKind: kind,
+                lastUpdateDate: Date.now(),
+                lastLoginDate: Date.now()
+            });
+
+            if (!_updateResult) {
+                console.log("updateOne fail!", _updateResult);
+                return res_.send({ result: false, status: FAIL, message: "update fail" });
+            }
+            return res_.send({ result: fetchItem, status: SUCCESS, message: "update success" });
+        } else {
+            const accountItem = new accounts({
+                accessToken: accessToken,
+                discordServerId: discordServerId,
+                address: address,
+                publicKey: publicKey,
+                roleVersion: version,
+                roleKind: kind,
+                firstLoginDate: Date.now(),
+                lastUpdateDate: Date.now(),
+                lastLoginDate: Date.now(),
+            })
+
+            const saveItem = await accountItem.save();
+            if (!saveItem) {
+                console.log("save fail!", saveItem);
+                return res_.send({ result: false, status: FAIL, message: "save fail" });
+            }
+            return res_.send({ result: saveItem, status: SUCCESS, message: "save success" });
+        }
+    } catch (error) {
+        console.log('something went wrong', error)
+        return res_.send({ result: false, status: FAIL, message: "something went wrong" });
     }
 }

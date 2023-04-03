@@ -3,6 +3,10 @@ const dotenv = require("dotenv");
 const ethereumUtil = require("ethereumjs-util");
 const fs = require("fs");
 
+const accounts = require('../db/accounts');
+const discords = require('../db/discords')
+const collections = require('../db/collections');
+
 dotenv.config();
 
 const EXPORT_OBJECT = {};
@@ -76,7 +80,7 @@ EXPORT_OBJECT.getRecoverAddress = (plainData, signData) => {
   return `0x${recoveredAddress}`;
 };
 
-EXPORT_OBJECT.getInscriptions = async (btcAccount) => {
+const getInscriptions = async (btcAccount) => {
   try {
     const response = await axios.get(
       `https://ordapi.xyz/address/${btcAccount}`
@@ -90,26 +94,63 @@ EXPORT_OBJECT.getInscriptions = async (btcAccount) => {
   }
 };
 
+EXPORT_OBJECT.getInscriptions = getInscriptions;
+
+EXPORT_OBJECT.KIND_PLATINUM = 2;
+EXPORT_OBJECT.KIND_GOLD = 1;
+EXPORT_OBJECT.KIND_GENERAL = 0;
+
+EXPORT_OBJECT.ROLE_PITBOSS = 20; // 20+
+EXPORT_OBJECT.ROLE_SERGEANT = 10; // 10+
+EXPORT_OBJECT.ROLE_OFFICERS = 5; // 5+
+EXPORT_OBJECT.ROLE_METAZEN = 2; // 2+
+EXPORT_OBJECT.ROLE_PIONEER = 1; // 1
+EXPORT_OBJECT.ROLE_DWELLER = 0 // 0
+
 EXPORT_OBJECT.SUCCESS = "SUCCESS";
 EXPORT_OBJECT.FAIL = "FAIL";
 
-EXPORT_OBJECT.getDisplayString = (str, subLength1 = 8, subLength2 = 8) => {
-  return `${str.toString().substr(0, subLength1)}...${str
-    .toString()
-    .substr(str.length - subLength2, str.length)}`;
-};
+EXPORT_OBJECT.checkRole = async (accessToken, discordServerId) => {
+  try {
+    const accountItem = await accounts.findOne({ accessToken: accessToken, discordServerId: discordServerId })
+    const collectionIdItem = await discords.findOne({ discordServerId: discordServerId })
+    const collectionItems = await collections.find({ id: collectionIdItem.id })
+    const inscriptions = await getInscriptions(accountItem.address);
 
-EXPORT_OBJECT.timeEstimate = (feeRate) => {
-  const feeRateValue = parseFloat(feeRate);
-  if (feeRateValue < 8) {
-    return ">1 hour";
-  } else if (feeRateValue < 10) {
-    return "~1 hour";
-  } else if (feeRateValue >= 10) {
-    return "~15 minutes";
+    if (!inscriptions.result)
+      return { version: this.ROLE_DWELLER, kind: this.KIND_GENERAL }
+
+    const nCount = 0;
+    const version = this.ROLE_DWELLER;
+    const kind = this.KIND_GENERAL;
+    for (let inscription in inscriptions) {
+      const items = collectionItems.filter((item) => item.inscription === inscription)
+      if (items.length > 0) {
+        nCount++;
+        items.map((item) => {
+          if (item.inscriptionType > kind) {
+            kind = item.inscriptionType;
+          }
+        })
+      }
+    }
+
+    if (version > this.ROLE_PITBOSS) {
+      version = this.ROLE_PITBOSS;
+    } else if (version > this.ROLE_SERGEANT) {
+      version = this.ROLE_SERGEANT;
+    } else if (version > this.ROLE_OFFICERS) {
+      version = this.ROLE_OFFICERS;
+    } else if (version > this.ROLE_METAZEN) {
+      version = this.ROLE_METAZEN;
+    }
+
+    return { version: version, kind: kind }
+  } catch (error) {
+    console.log('error: ', error)
+    return { version: this.ROLE_DWELLER, kind: this.KIND_GENERAL }
   }
-  return "Can't Estimate";
-};
+}
 
 EXPORT_OBJECT.delay = (ms) => {
   return new Promise((resolve) => {
