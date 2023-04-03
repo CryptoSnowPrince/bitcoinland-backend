@@ -1,5 +1,5 @@
-const { user } = require('../../db');
-const { SUCCESS, FAIL, isAccount } = require('../../utils')
+const { user } = require('../db');
+const { SUCCESS, FAIL, isAccount } = require('../utils')
 
 module.exports = async (req_, res_) => {
     console.log("getUserInfo: ", req_.body);

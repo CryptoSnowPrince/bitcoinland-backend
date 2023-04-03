@@ -1,8 +1,13 @@
 const express = require('express');
-const users = require("./users");
-
 const router = express.Router();
 
-router.use("/users", users);
+const getAccountInfo = require("./getAccountInfo");
+const setAccountInfo = require("./setAccountInfo");
+
+// getAccountInfo
+router.get('/getAccountInfo', getAccountInfo);
+
+// setAccountInfo
+router.get('/setAccountInfo', setAccountInfo);
 
 module.exports = router;

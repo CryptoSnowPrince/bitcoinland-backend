@@ -1,4 +1,4 @@
-const { accounts } = require('../../db/accounts');
+const { accounts } = require('../db/accounts');
 const { SUCCESS, FAIL, isAccount } = require('../../utils')
 
 module.exports = async (req_, res_) => {
