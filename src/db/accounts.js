@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { KIND_GENERAL, ROLE_DWELLER } = require("../utils");
 
 const accountSchema = new mongoose.Schema(
     {
@@ -7,8 +6,8 @@ const accountSchema = new mongoose.Schema(
         discordServerId: { type: String, default: "" },
         address: { type: String, default: "" },
         publicKey: { type: String, default: "" },
-        roleVersion: { type: Number, default: ROLE_DWELLER },
-        roleKind: { type: Number, default: KIND_GENERAL },
+        roleVersion: { type: Number, default: 0 }, // ROLE_DWELLER
+        roleKind: { type: Number, default: 0 }, // KIND_GENERAL
         firstLoginDate: { type: Date, default: Date.now() },
         lastUpdateDate: { type: Date, default: Date.now() },
         lastLoginDate: { type: Date, default: Date.now() },

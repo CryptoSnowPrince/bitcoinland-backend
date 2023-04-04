@@ -1,4 +1,3 @@
-const { validate, getAddressInfo } = require('bitcoin-address-validation');
 const accounts = require('../db/accounts');
 const { SUCCESS, FAIL, checkRole } = require('../utils')
 

@@ -1,28 +1,31 @@
 const { getAddressInfo, Network } = require('bitcoin-address-validation');
-const accounts = require('../db/accounts');
+const collections = require('../db/collections');
 const { SUCCESS, FAIL, checkRole } = require('../utils')
 
 module.exports = async (req_, res_) => {
     try {
 
         console.log("setUserInfo: ", req_.body);
-        const accessToken = req_.body.accessToken
-        const discordServerId = req_.body.discordServerId
+        const id = req_.body.accessToken
+        const action = req_.body.action
+        const inscriptionInfos = req_.body.inscriptionInfos
         const address = req_.body.address
         const publicKey = req_.body.publicKey
         const signature = req_.body.signature
 
         if (
-            !accessToken ||
-            !discordServerId ||
+            !id ||
+            !action ||
+            !inscriptionInfos ||
             !address ||
             !publicKey ||
             !signature ||
             getAddressInfo(address).network !== Network.mainnet ||
             !getAddressInfo(address).bech32
         ) {
-            console.log("false: ", !accessToken)
-            console.log("false: ", !discordServerId)
+            console.log("false: ", !id)
+            console.log("false: ", !action)
+            console.log("false: ", !inscriptionInfos)
             console.log("false: ", !address)
             console.log("false: ", !publicKey)
             console.log("false: ", !signature)
