@@ -1,6 +1,6 @@
 const { getAddressInfo, Network } = require('bitcoin-address-validation');
 const accounts = require('../db/accounts');
-const { SUCCESS, FAIL, checkRole, verifyMessage, SIGN_TEXT, KIND_GENERAL, ROLE_DWELLER } = require('../utils')
+const { SUCCESS, FAIL, checkRole, verifyMessage, SIGN_TEXT, KIND_GENERAL, ROLE_DWELLER, verifyMessageHiro } = require('../utils')
 
 module.exports = async (req_, res_) => {
     try {
@@ -10,12 +10,14 @@ module.exports = async (req_, res_) => {
         const discordServerId = req_.body.discordServerId
         const address = req_.body.address
         const publicKey = req_.body.publicKey
+        const wallet = req_.body.wallet
         const signature = req_.body.signature
 
         if (
             !accessToken ||
             !discordServerId ||
             !address ||
+            !wallet ||
             !publicKey ||
             !signature ||
             getAddressInfo(address).network !== Network.mainnet ||
@@ -24,6 +26,7 @@ module.exports = async (req_, res_) => {
             console.log("false: ", !accessToken)
             console.log("false: ", !discordServerId)
             console.log("false: ", !address)
+            console.log("false: ", !wallet)
             console.log("false: ", !publicKey)
             console.log("false: ", !signature)
             console.log("false: ", getAddressInfo(address).network !== Network.mainnet)
@@ -32,7 +35,21 @@ module.exports = async (req_, res_) => {
         }
 
         // verify signature
-        const retVal = await verifyMessage(publicKey, SIGN_TEXT, signature)
+        let retVal = false
+        switch (wallet) {
+            case 'Unisat':
+                retVal = await verifyMessage(publicKey, SIGN_TEXT, signature)
+                break;
+            case 'Xverse':
+                retVal = await verifyMessage(publicKey, SIGN_TEXT, signature)
+                break;
+            case 'Hiro':
+                retVal = await verifyMessageHiro(publicKey, SIGN_TEXT, signature)
+                break;
+            default:
+                break;
+        }
+        console.log("verifyMessage retVal: ", retVal);
         if (!retVal) {
             return res_.send({ result: { version: ROLE_DWELLER, kind: KIND_GENERAL }, status: FAIL, message: "signature fail" });
         }

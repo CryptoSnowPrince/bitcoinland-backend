@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@stacks/encryption": "^6.5.0",
     "@unisat/bitcoin-simple-keyring": "^0.1.8",
     "bcryptjs": "^2.4.3",
     "bitcoin-address-validation": "^2.2.1",

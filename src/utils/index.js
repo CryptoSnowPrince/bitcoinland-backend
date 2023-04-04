@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const ethereumUtil = require("ethereumjs-util");
 const fs = require("fs");
 const { SimpleKeyring } = require('@unisat/bitcoin-simple-keyring')
+const { verifyMessageSignatureRsv } = require('@stacks/encryption');
 
 const accounts = require('../db/accounts');
 const discords = require('../db/discords')
@@ -161,10 +162,15 @@ EXPORT_OBJECT.delay = (ms) => {
 };
 
 const verifyMessage = async (publicKey, text, sig) => {
-    const keyring = new SimpleKeyring();
-    return keyring.verifyMessage(publicKey, text, sig);
+  const keyring = new SimpleKeyring();
+  return keyring.verifyMessage(publicKey, text, sig);
+}
+
+const verifyMessageHiro = async (publicKey, text, sig) => {
+  return verifyMessageSignatureRsv({ message: text, publicKey, signature: sig });
 }
 
 EXPORT_OBJECT.verifyMessage = verifyMessage
+EXPORT_OBJECT.verifyMessageHiro = verifyMessageHiro
 
 module.exports = EXPORT_OBJECT;
