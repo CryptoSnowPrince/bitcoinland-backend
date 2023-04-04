@@ -1,3 +1,3 @@
 module.exports = {
-    url: "mongodb://0.0.0.0:27017/user-role-by-inscription-alpha"
+    url: "mongodb://0.0.0.0:27017/inscription-verification-system-alpha"
 }
