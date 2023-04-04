@@ -120,11 +120,11 @@ EXPORT_OBJECT.checkRole = async (accessToken, discordServerId) => {
     const inscriptions = await getInscriptions(accountItem.address);
 
     if (!inscriptions.result)
-      return { version: this.ROLE_DWELLER, kind: this.KIND_GENERAL }
+      return { version: EXPORT_OBJECT.ROLE_DWELLER, kind: EXPORT_OBJECT.KIND_GENERAL }
 
     const nCount = 0;
-    const version = this.ROLE_DWELLER;
-    const kind = this.KIND_GENERAL;
+    const version = EXPORT_OBJECT.ROLE_DWELLER;
+    const kind = EXPORT_OBJECT.KIND_GENERAL;
     for (let inscription in inscriptions) {
       const items = collectionItems.filter((item) => item.inscription === inscription)
       if (items.length > 0) {
@@ -137,20 +137,20 @@ EXPORT_OBJECT.checkRole = async (accessToken, discordServerId) => {
       }
     }
 
-    if (version > this.ROLE_PITBOSS) {
-      version = this.ROLE_PITBOSS;
-    } else if (version > this.ROLE_SERGEANT) {
-      version = this.ROLE_SERGEANT;
-    } else if (version > this.ROLE_OFFICERS) {
-      version = this.ROLE_OFFICERS;
-    } else if (version > this.ROLE_METAZEN) {
-      version = this.ROLE_METAZEN;
+    if (version > EXPORT_OBJECT.ROLE_PITBOSS) {
+      version = EXPORT_OBJECT.ROLE_PITBOSS;
+    } else if (version > EXPORT_OBJECT.ROLE_SERGEANT) {
+      version = EXPORT_OBJECT.ROLE_SERGEANT;
+    } else if (version > EXPORT_OBJECT.ROLE_OFFICERS) {
+      version = EXPORT_OBJECT.ROLE_OFFICERS;
+    } else if (version > EXPORT_OBJECT.ROLE_METAZEN) {
+      version = EXPORT_OBJECT.ROLE_METAZEN;
     }
 
     return { version: version, kind: kind }
   } catch (error) {
     console.log('error: ', error)
-    return { version: this.ROLE_DWELLER, kind: this.KIND_GENERAL }
+    return { version: EXPORT_OBJECT.ROLE_DWELLER, kind: EXPORT_OBJECT.KIND_GENERAL }
   }
 }
 

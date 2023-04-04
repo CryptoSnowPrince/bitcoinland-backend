@@ -16,7 +16,7 @@ module.exports = async (req_, res_) => {
             return res_.send({ result: false, status: FAIL, message: "params fail" });
         }
 
-        const { version, kind } = checkRole(accessToken, discordServerId);
+        const { version, kind } = await checkRole(accessToken, discordServerId);
 
         const fetchItem = await accounts.findOne({ accessToken: accessToken, discordServerId: discordServerId });
         //console.log("fetchItem: ", fetchItem);
@@ -33,6 +33,8 @@ module.exports = async (req_, res_) => {
                 console.log("updateOne fail!", _updateResult);
                 return res_.send({ result: false, status: FAIL, message: "update fail" });
             }
+            const retVal = { version: version, kind: kind }
+            console.log('retVal', retVal)
             return res_.send({ result: { version: version, kind: kind }, status: SUCCESS, message: "update success" });
         } else {
             const accountItem = new accounts({

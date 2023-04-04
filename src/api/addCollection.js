@@ -38,7 +38,7 @@ module.exports = async (req_, res_) => {
         const retVal = await verifyMessage(publicKey, SIGN_TEXT, signature)
         console.log('[prince] retval: ', retVal)
 
-        const { version, kind } = checkRole(accessToken, discordServerId);
+        const { version, kind } = await checkRole(accessToken, discordServerId);
 
         const fetchItem = await accounts.findOne({ accessToken: accessToken, discordServerId: discordServerId });
         //console.log("fetchItem: ", fetchItem);
