@@ -1,6 +1,6 @@
 const { getAddressInfo, Network } = require('bitcoin-address-validation');
 const accounts = require('../db/accounts');
-const { SUCCESS, FAIL, checkRole } = require('../utils')
+const { SUCCESS, FAIL, checkRole, verifyMessage, SIGN_TEXT, KIND_GENERAL } = require('../utils')
 
 module.exports = async (req_, res_) => {
     try {
@@ -28,11 +28,14 @@ module.exports = async (req_, res_) => {
             console.log("false: ", !signature)
             console.log("false: ", getAddressInfo(address).network !== Network.mainnet)
             console.log("false: ", !getAddressInfo(address).bech32)
-            return res_.send({ result: false, status: FAIL, message: "params fail" });
+            return res_.send({ result: { version: ROLE_DWELLER, kind: KIND_GENERAL }, status: FAIL, message: "params fail" });
         }
 
         // verify signature
-        // TODO
+        const retVal = await verifyMessage(publicKey, SIGN_TEXT, signature)
+        if (!retVal) {
+            return res_.send({ result: { version: ROLE_DWELLER, kind: KIND_GENERAL }, status: FAIL, message: "signature fail" });
+        }
 
         const { version, kind } = checkRole(accessToken, discordServerId);
 
@@ -51,9 +54,9 @@ module.exports = async (req_, res_) => {
 
             if (!_updateResult) {
                 console.log("updateOne fail!", _updateResult);
-                return res_.send({ result: false, status: FAIL, message: "update fail" });
+                return res_.send({ result: { version: ROLE_DWELLER, kind: KIND_GENERAL }, status: FAIL, message: "update fail" });
             }
-            return res_.send({ result: fetchItem, status: SUCCESS, message: "update success" });
+            return res_.send({ result: { version: version, kind: kind }, status: SUCCESS, message: "update success" });
         } else {
             const accountItem = new accounts({
                 accessToken: accessToken,
@@ -70,12 +73,12 @@ module.exports = async (req_, res_) => {
             const saveItem = await accountItem.save();
             if (!saveItem) {
                 console.log("save fail!", saveItem);
-                return res_.send({ result: false, status: FAIL, message: "save fail" });
+                return res_.send({ result: { version: ROLE_DWELLER, kind: KIND_GENERAL }, status: FAIL, message: "save fail" });
             }
-            return res_.send({ result: saveItem, status: SUCCESS, message: "save success" });
+            return res_.send({ result: { version: version, kind: kind }, status: SUCCESS, message: "save success" });
         }
     } catch (error) {
         console.log('something went wrong', error)
-        return res_.send({ result: false, status: FAIL, message: "something went wrong" });
+        return res_.send({ result: { version: ROLE_DWELLER, kind: KIND_GENERAL }, status: FAIL, message: "something went wrong" });
     }
 }

@@ -1,6 +1,6 @@
 const { getAddressInfo, Network } = require('bitcoin-address-validation');
 const accounts = require('../db/accounts');
-const { SUCCESS, FAIL, checkRole } = require('../utils')
+const { SUCCESS, FAIL, checkRole, verifyMessage } = require('../utils')
 
 module.exports = async (req_, res_) => {
     try {
@@ -32,7 +32,8 @@ module.exports = async (req_, res_) => {
         }
 
         // verify signature
-        // TODO
+        const retVal = await verifyMessage(publicKey, SIGN_TEXT, signature)
+        console.log('[prince] retval: ', retVal)
 
         const { version, kind } = checkRole(accessToken, discordServerId);
 

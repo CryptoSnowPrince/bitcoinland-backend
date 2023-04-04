@@ -110,6 +110,7 @@ EXPORT_OBJECT.ROLE_DWELLER = 0 // 0
 
 EXPORT_OBJECT.SUCCESS = "SUCCESS";
 EXPORT_OBJECT.FAIL = "FAIL";
+EXPORT_OBJECT.SIGN_TEXT = "Please sign this message for https://connect.aptosland.io to verify your assets."
 
 EXPORT_OBJECT.checkRole = async (accessToken, discordServerId) => {
   try {
