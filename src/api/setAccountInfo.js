@@ -1,6 +1,6 @@
 const { getAddressInfo, Network } = require('bitcoin-address-validation');
 const accounts = require('../db/accounts');
-const { SUCCESS, FAIL, checkRole, verifyMessage, SIGN_TEXT, KIND_GENERAL } = require('../utils')
+const { SUCCESS, FAIL, checkRole, verifyMessage, SIGN_TEXT, KIND_GENERAL, ROLE_DWELLER } = require('../utils')
 
 module.exports = async (req_, res_) => {
     try {
