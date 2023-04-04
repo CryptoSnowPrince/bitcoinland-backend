@@ -41,8 +41,6 @@ module.exports = async (req_, res_) => {
                 retVal = await verifyMessage(publicKey, SIGN_TEXT, signature)
                 break;
             case 'Xverse':
-                retVal = await verifyMessage(publicKey, SIGN_TEXT, signature)
-                break;
             case 'Hiro':
                 retVal = await verifyMessageHiro(publicKey, SIGN_TEXT, signature)
                 break;

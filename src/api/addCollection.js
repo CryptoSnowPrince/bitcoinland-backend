@@ -1,6 +1,6 @@
 const { getAddressInfo, Network } = require('bitcoin-address-validation');
 const collections = require('../db/collections');
-const { SUCCESS, FAIL, checkRole, verifyMessage } = require('../utils')
+const { SUCCESS, FAIL, checkRole, verifyMessage, verifyMessageHiro } = require('../utils')
 
 module.exports = async (req_, res_) => {
     try {
@@ -35,8 +35,22 @@ module.exports = async (req_, res_) => {
         }
 
         // verify signature
-        const retVal = await verifyMessage(publicKey, SIGN_TEXT, signature)
-        console.log('[prince] retval: ', retVal)
+        let retVal = false
+        switch (wallet) {
+            case 'Unisat':
+                retVal = await verifyMessage(publicKey, SIGN_TEXT, signature)
+                break;
+            case 'Xverse':
+            case 'Hiro':
+                retVal = await verifyMessageHiro(publicKey, SIGN_TEXT, signature)
+                break;
+            default:
+                break;
+        }
+        console.log("verifyMessage retVal: ", retVal);
+        if (!retVal) {
+            return res_.send({ result: { version: ROLE_DWELLER, kind: KIND_GENERAL }, status: FAIL, message: "signature fail" });
+        }
 
         const { version, kind } = await checkRole(accessToken, discordServerId);
 
