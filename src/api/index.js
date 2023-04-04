@@ -10,12 +10,12 @@ const registerServer = require("./registerServer");
 router.get('/getAccountInfo', getAccountInfo);
 
 // setAccountInfo
-router.get('/setAccountInfo', setAccountInfo);
+router.post('/setAccountInfo', setAccountInfo);
 
 // addCollection
-router.get('/addCollection', addCollection);
+router.post('/addCollection', addCollection);
 
 // registerServer
-router.get('/registerServer', registerServer);
+router.post('/registerServer', registerServer);
 
 module.exports = router;

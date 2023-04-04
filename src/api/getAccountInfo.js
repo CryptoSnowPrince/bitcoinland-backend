@@ -3,7 +3,7 @@ const { SUCCESS, FAIL, checkRole } = require('../utils')
 
 module.exports = async (req_, res_) => {
     try {
-        console.log("getUserInfo: ", req_.query);
+        console.log("getAccountInfo: ", req_.query);
         const accessToken = req_.query.accessToken;
         const discordServerId = req_.query.discordServerId;
 
