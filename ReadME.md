@@ -1,96 +1,37 @@
-# ordinalbtc-marketplace-backend
+# bitcoin land backend
 
-### API_URL
+## ENV
 
+OS: Ubuntu 22.04
+DB: MongoDB: 6.0.5
+Node: 16.10.0
+Yarn: 1.22.19
+## How to start
+
+## How to run as development mode
+
+```shell
+yarn
+yarn start
 ```
-https://ordinalbtc.app/api
+
+## How to run as test mode
+
+```shell
+yarn
+yarn test
 ```
-### API_LIST
+
+## How to run as product mode
+
+```shell
+yarn
+yarn start-server
 ```
-POST
-https://ordinalbtc.app/api/users/getUserInfo
-erc20Account: string
 
-POST
-https://ordinalbtc.app/api/users/setUserInfo
-erc20Account: string
-name: string
-avatar: number
-background: number
-actionDate: date
-signData: object
+## How to stop server
 
-POST
-https://ordinalbtc.app/api/users/getUserInscriptions
-btcAccount: string
-
-POST
-https://ordinalbtc.app/api/users/withdrawInscription
-erc20Account: string
-inscriptionID: string
-receiver: string
-signData: object
-
-POST
-https://ordinalbtc.app/api/users/listInscription
-inscriptionID: string
-name: string
-category: number
-btcSeller: string
-tokenAddress: string
-tokenAmount: number
-description: string
-lockTime: number
-actionDate: date
-signData: object
-
-POST
-https://ordinalbtc.app/api/users/unListInscription
-inscriptionID: string
-btcSeller: string
-actionDate: date
-signData: object
-
-POST
-https://ordinalbtc.app/api/offers/getList
-categories: [Number]
-tokenAddresses: [String]
-btcSellers: [String]
-btcBuyers: [String]
-inscriptionIDs: [String]
-inscriptionNumbers: [String]
-states: [Number]
-minPrice: Number
-maxPrice: Number
-sortBy: Number
-active: boolean
-
-GET
-https://ordinalbtc.app/api/inscriptions/detail?inscriptionID=${inscriptionID}
-inscriptionID: String
-
-GET
-https://ordinalbtc.app/api/inscriptions/withdrawDetail?orderNumber=${orderNumber}
-orderNumber: Number
-
-GET
-https://ordinalbtc.app/api/offers/getMostTrendList
-
-GET
-https://ordinalbtc.app/api/utils/getGasPrice?chainID=Number
-const CHAINID_ETH = 1
-const CHAINID_BSC = 56
-const CHAINID_GOERLI = 5
-
-GET
-https://ordinalbtc.app/api/users/getNotify?erc20Account=erc20Account
-
-POST
-https://ordinalbtc.app/api/users/removeNotify
-erc20Account: erc20Account
-removeAll: bool
-type: Number
-link: string
-content: string
-notifyDate: Date
+```shell
+yarn
+yarn stop-server
 ```
