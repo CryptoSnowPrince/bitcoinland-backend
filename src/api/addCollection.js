@@ -76,7 +76,9 @@ module.exports = async (req_, res_) => {
             return res_.send({ result: false, status: FAIL, message: "params fail" });
         }
 
-        const inscriptions = JSON.parse(inscriptionInfos);
+        const inscriptions = inscriptionInfos;
+        console.log('inscriptionInfos: ', inscriptionInfos)
+        console.log('inscriptionInfos.length: ', inscriptionInfos.length)
         if (!inscriptions && inscriptions.length <= 0) {
             return res_.send({ result: false, status: FAIL, message: "empty data" });
         }
