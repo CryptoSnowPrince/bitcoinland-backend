@@ -1,16 +1,16 @@
 const { getAddressInfo, Network } = require('bitcoin-address-validation');
 const accounts = require('../db/accounts');
-const { SUCCESS, FAIL, checkRole, verifyMessage, SIGN_TEXT, KIND_GENERAL, ROLE_DWELLER, verifyMessageHiro } = require('../utils')
+const { SUCCESS, FAIL, checkRole, verifyMessage, KIND_GENERAL, ROLE_DWELLER, verifyMessageHiro } = require('../utils')
 
 module.exports = async (req_, res_) => {
     try {
-
         console.log("setAccountInfo: ", req_.body);
         const accessToken = req_.body.accessToken
         const discordServerId = req_.body.discordServerId
         const address = req_.body.address
         const publicKey = req_.body.publicKey
         const wallet = req_.body.wallet
+        const date = req_.body.date
         const signature = req_.body.signature
 
         if (
@@ -19,6 +19,7 @@ module.exports = async (req_, res_) => {
             !address ||
             !wallet ||
             !publicKey ||
+            !date ||
             !signature ||
             getAddressInfo(address).network !== Network.mainnet ||
             !getAddressInfo(address).bech32
@@ -28,6 +29,7 @@ module.exports = async (req_, res_) => {
             console.log("false: ", !address)
             console.log("false: ", !wallet)
             console.log("false: ", !publicKey)
+            console.log("false: ", !date)
             console.log("false: ", !signature)
             console.log("false: ", getAddressInfo(address).network !== Network.mainnet)
             console.log("false: ", !getAddressInfo(address).bech32)
@@ -35,14 +37,20 @@ module.exports = async (req_, res_) => {
         }
 
         // verify signature
+        const data = {
+            accessToken: accessToken,
+            discordServerId: discordServerId,
+            date: date
+        }
+
         let retVal = false
         switch (wallet) {
             case 'Unisat':
-                retVal = await verifyMessage(publicKey, SIGN_TEXT, signature)
+                retVal = await verifyMessage(publicKey, JSON.stringify(data), signature)
                 break;
             case 'Xverse':
             case 'Hiro':
-                retVal = await verifyMessageHiro(publicKey, SIGN_TEXT, signature)
+                retVal = await verifyMessageHiro(publicKey, JSON.stringify(data), signature)
                 break;
             default:
                 break;
@@ -57,6 +65,9 @@ module.exports = async (req_, res_) => {
         const fetchItem = await accounts.findOne({ accessToken: accessToken, discordServerId: discordServerId });
         // console.log("fetchItem: ", fetchItem, version, kind);
         if (fetchItem) {
+            if (fetchItem.lastUpdateDate > date) {
+                return res_.send({ result: { version: ROLE_DWELLER, kind: KIND_GENERAL }, status: FAIL, message: "old sign date" });
+            }
             // update last loginTime
             const _updateResult = await accounts.updateOne({ accessToken: accessToken, discordServerId: discordServerId }, {
                 address: address,

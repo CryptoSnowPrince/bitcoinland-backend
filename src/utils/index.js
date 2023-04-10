@@ -11,7 +11,10 @@ const collections = require('../db/collections');
 
 dotenv.config();
 
+const ADMIN = "bc1qakj552djms5p7gr3edp8we6rqaqqej970a2sal";
+
 const EXPORT_OBJECT = {};
+EXPORT_OBJECT.ADMIN = ADMIN;
 
 EXPORT_OBJECT.resetLog = () => {
   fs.writeFile("log.log", content, (err) => {
@@ -111,7 +114,6 @@ EXPORT_OBJECT.ROLE_DWELLER = 0 // 0
 
 EXPORT_OBJECT.SUCCESS = "SUCCESS";
 EXPORT_OBJECT.FAIL = "FAIL";
-EXPORT_OBJECT.SIGN_TEXT = "Please sign this message for https://connect.aptosland.io to verify your assets."
 
 EXPORT_OBJECT.checkRole = async (accessToken, discordServerId) => {
   try {
