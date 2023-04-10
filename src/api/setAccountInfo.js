@@ -31,8 +31,10 @@ module.exports = async (req_, res_) => {
             console.log("false: ", !publicKey)
             console.log("false: ", !date)
             console.log("false: ", !signature)
-            console.log("false: ", getAddressInfo(address).network !== Network.mainnet)
-            console.log("false: ", !getAddressInfo(address).bech32)
+            if (address) {
+                console.log("false: ", getAddressInfo(address).network !== Network.mainnet)
+                console.log("false: ", !getAddressInfo(address).bech32)
+            }
             return res_.send({ result: { version: ROLE_DWELLER, kind: KIND_GENERAL }, status: FAIL, message: "params fail" });
         }
 
