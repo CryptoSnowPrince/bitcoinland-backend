@@ -44,6 +44,7 @@ module.exports = async (req_, res_) => {
             discordServerId: discordServerId,
             date: date
         }
+        // console.log("sign data: ", JSON.stringify(data))
 
         let retVal = false
         switch (wallet) {
